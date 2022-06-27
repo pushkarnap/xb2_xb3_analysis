@@ -2,23 +2,26 @@
 AUTHOR: Paarangat Pushkarna 
 EMAIL: pushkarnap@student.unimelb.edu.au
 
-Reaches into an HDF file, goes to the specified pulse and waveform, returns.
+Reaches into an HDF file, goes to the specified pulse and waveform.
+Outputs basic plot, makes basic scalings.
 """
 
 import argparse 
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
+from dateutil import parser
+import time
 
-parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
-parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
+cli_parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
+cli_parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
                     help = 'HDF filepath')
-parser.add_argument('-p', '--pulse', type=str, metavar='', required = True, 
+cli_parser.add_argument('-p', '--pulse', type=str, metavar='', required = True, 
                     help = 'Name of pulse')
-parser.add_argument('-c', '--channel', type=str, metavar='', required = True,
+cli_parser.add_argument('-c', '--channel', type=str, metavar='', required = True,
                     help = 'Name of channel')
 
-args = parser.parse_args()
+args = cli_parser.parse_args()
 
 def return_wf(filepath, pulse, channel):
     
@@ -31,6 +34,7 @@ def return_wf(filepath, pulse, channel):
                                    dataset.attrs["Scale_Coeff_c0"],
                                    dataset.attrs["Scale_Coeff_c1"],
                                    dataset.attrs["Scale_Coeff_c2"])
+        xaxis_reltime = xaxis_timescale(xaxis_raw, dataset.attrs["wf_increment"])
         plot_wf(xaxis_raw, yaxis_scaled, pulse, channel)
         
     
@@ -47,8 +51,9 @@ def plot_wf(xaxis, yaxis, pulse, channel):
     ax.grid()
     fig.savefig(f"{pulse}_{channel}_plot.png")
     
+def xaxis_timescale(samples, inc):
+    return samples*(float(inc))
     
-        
 if __name__ == '__main__':
     return_wf(args.filepath, args.pulse, args.channel)    
     
