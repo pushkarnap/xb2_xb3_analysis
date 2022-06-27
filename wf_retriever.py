@@ -7,6 +7,7 @@ Reaches into an HDF file, goes to the specified pulse and waveform, returns.
 
 import argparse 
 import h5py
+import numpy as np
 
 parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
 parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
@@ -21,8 +22,18 @@ args = parser.parse_args()
 def return_wf(filepath, pulse, channel):
     
     with h5py.File(filepath, "r") as fhand:
-        print(fhand[f"{pulse}/{channel}"])
+        dataset = fhand[f"{pulse}/{channel}"]
+        yaxis_raw = dataset[:]
+        xaxis_raw = np.linspace(0, dataset.attrs["wf_samples"], 
+                                dataset.attrs["wf_samples"])
+        print(xaxis_raw.shape, yaxis_raw.shape)
+        
+    
+def create_axes(dataset):
+    print(dataset.attrs)
+    
         
 if __name__ == '__main__':
-    return_wf(args.filepath, args.pulse, args.channel)
+    return_wf(args.filepath, args.pulse, args.channel)    
+    
 
