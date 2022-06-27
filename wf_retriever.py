@@ -26,11 +26,18 @@ def return_wf(filepath, pulse, channel):
         yaxis_raw = dataset[:]
         xaxis_raw = np.linspace(0, dataset.attrs["wf_samples"], 
                                 dataset.attrs["wf_samples"])
+        yaxis_scaled = scale_yaxis(yaxis_raw, 
+                                   dataset.attrs["Scale_Coeff_c0"],
+                                   dataset.attrs["Scale_Coeff_c1"],
+                                   dataset.attrs["Scale_Coeff_c2"])
+        
         print(xaxis_raw.shape, yaxis_raw.shape)
+        print(yaxis_scaled)
         
     
-def create_axes(dataset):
-    print(dataset.attrs)
+def scale_yaxis(yaxis, c0, c1, c2):
+    scaled = c2*(yaxis**2) + c1*yaxis + c0
+    return scaled
     
         
 if __name__ == '__main__':
