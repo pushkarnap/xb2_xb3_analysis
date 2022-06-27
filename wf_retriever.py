@@ -8,6 +8,7 @@ Reaches into an HDF file, goes to the specified pulse and waveform, returns.
 import argparse 
 import h5py
 import numpy as np
+import matplotlib.pyplot as plt
 
 parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
 parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
@@ -30,14 +31,22 @@ def return_wf(filepath, pulse, channel):
                                    dataset.attrs["Scale_Coeff_c0"],
                                    dataset.attrs["Scale_Coeff_c1"],
                                    dataset.attrs["Scale_Coeff_c2"])
-        
-        print(xaxis_raw.shape, yaxis_raw.shape)
-        print(yaxis_scaled)
+        plot_wf(xaxis_raw, yaxis_scaled, pulse, channel)
         
     
 def scale_yaxis(yaxis, c0, c1, c2):
-    scaled = c2*(yaxis**2) + c1*yaxis + c0
+    scaled = np.abs(c0*(yaxis**2) + c1*yaxis + c2)
     return scaled
+
+def plot_wf(xaxis, yaxis, pulse, channel):
+    fig, ax = plt.subplots()
+    ax.plot(xaxis, yaxis)
+    ax.set(xlabel = "Samples [no unit]",
+           ylabel = "Power [kW]",
+           title = f"{channel}")
+    ax.grid()
+    fig.savefig(f"{pulse}_{channel}_plot.png")
+    
     
         
 if __name__ == '__main__':
