@@ -5,23 +5,12 @@ EMAIL: pushkarnap@student.unimelb.edu.au
 Reaches into an HDF file, goes to the specified pulse and waveform.
 Outputs basic plot, makes basic scalings.
 """
-
 import argparse 
 import h5py
 import numpy as np
 import matplotlib.pyplot as plt
 from dateutil import parser
 import time
-
-cli_parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
-cli_parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
-                    help = 'HDF filepath')
-cli_parser.add_argument('-p', '--pulse', type=str, metavar='', required = True, 
-                    help = 'Name of pulse')
-cli_parser.add_argument('-c', '--channel', type=str, metavar='', required = True,
-                    help = 'Name of channel')
-
-args = cli_parser.parse_args()
 
 def return_wf(filepath, pulse, channel):
     
@@ -56,6 +45,15 @@ def xaxis_timescale(samples, inc):
     return samples*(float(inc))
     
 if __name__ == '__main__':
+    cli_parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
+    cli_parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
+                        help = 'HDF filepath')
+    cli_parser.add_argument('-p', '--pulse', type=str, metavar='', required = True, 
+                        help = 'Name of pulse')
+    cli_parser.add_argument('-c', '--channel', type=str, metavar='', required = True,
+                        help = 'Name of channel')
+
+    args = cli_parser.parse_args()
     return_wf(args.filepath, args.pulse, args.channel)    
     
 
