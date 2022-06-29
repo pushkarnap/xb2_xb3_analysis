@@ -39,17 +39,18 @@ def return_wf(filepath, pulse, channel):
         
     
 def scale_yaxis(yaxis, c0, c1, c2):
-    scaled = np.abs(c0*(yaxis**2) + c1*yaxis + c2)
+    print(c0, c1, c2)
+    scaled = c2*(yaxis**2) + c1*yaxis + c0
     return scaled
 
 def plot_wf(xaxis, yaxis, pulse, channel):
     fig, ax = plt.subplots()
     ax.plot(xaxis, yaxis)
     ax.set(xlabel = "Samples [no unit]",
-           ylabel = "Power [kW]",
+           ylabel = "Power [Watts]",
            title = f"{channel}")
     ax.grid()
-    fig.savefig(f"{pulse}_{channel}_plot.png")
+    fig.savefig(f"{pulse}_{channel}_plot_scaled.png")
     
 def xaxis_timescale(samples, inc):
     return samples*(float(inc))
