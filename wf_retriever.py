@@ -28,7 +28,6 @@ def return_wf(filepath, pulse, channel):
         
     
 def scale_yaxis(yaxis, c0, c1, c2):
-    print(c0, c1, c2)
     scaled = c2*(yaxis**2) + c1*yaxis + c0
     return scaled
 
@@ -36,10 +35,10 @@ def plot_wf(xaxis, yaxis, pulse, channel):
     fig, ax = plt.subplots()
     ax.plot(xaxis, yaxis)
     ax.set(xlabel = "Samples [no unit]",
-           ylabel = "Power [Watts]",
+           ylabel = "ADC Count",
            title = f"{channel}")
     ax.grid()
-    fig.savefig(f"{pulse}_{channel}_plot_scaled.png")
+    fig.savefig(f"calib_raw/{pulse}_{channel}_plot_raw.png")
     
 def xaxis_timescale(samples, inc):
     return samples*(float(inc))
@@ -47,11 +46,19 @@ def xaxis_timescale(samples, inc):
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(description = 'Plot event data waveforms')
     cli_parser.add_argument('-f', '--filepath', type=str, metavar='', required = True, 
+<<<<<<< HEAD
                         help = 'HDF filepath')
     cli_parser.add_argument('-p', '--pulse', type=str, metavar='', required = True, 
                         help = 'Name of pulse')
     cli_parser.add_argument('-c', '--channel', type=str, metavar='', required = True,
                         help = 'Name of channel')
+=======
+                    help = 'HDF filepath')
+    cli_parser.add_argument('-p', '--pulse', type=str, metavar='', required = True, 
+                    help = 'Name of pulse')
+    cli_parser.add_argument('-c', '--channel', type=str, metavar='', required = True,
+                    help = 'Name of channel')
+>>>>>>> calib_compare
 
     args = cli_parser.parse_args()
     return_wf(args.filepath, args.pulse, args.channel)    
