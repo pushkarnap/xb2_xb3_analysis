@@ -1,12 +1,20 @@
 import argparse 
 from pathlib import Path
+import h5py 
 
 def get_filepaths(hdf_path):
-    return list(hdf_path.glob("EventData*.hdf"))
+    hdf_file_list = list(hdf_path.glob("EventData*_*.hdf"))
+    return hdf_file_list
 
+def retrieve_adc(hdf_file):
+    
+    with h5py.File(hdf_file, "r") as fhand:
+        print(f"Hello file! {hdf_file}")
+    
 def run_calib(hdf_path):
     hdf_files = get_filepaths(hdf_path)
-    print(hdf_files)
+    for hdf_file in hdf_files:
+        retrieve_adc(hdf_file)
     return
 
 if __name__ == '__main__':
