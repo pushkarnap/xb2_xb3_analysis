@@ -13,7 +13,6 @@ def scale_yaxis(yaxis, c0, c1, c2):
 
 def check_psi_scaling(name, obj):
     is_dataset = isinstance(obj, h5py.Dataset)
-    
     if is_dataset:
         is_psi = (obj.attrs["NI_ChannelName"] == "PSI_amp")
         if is_psi:
