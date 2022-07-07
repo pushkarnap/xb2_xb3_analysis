@@ -34,12 +34,13 @@ def psi_file_summ(hdf_file):
 def save_condition(hdf_path):
     hdf_files = get_filepaths(hdf_path)
     for hdf_file in hdf_files:
+        print(f"processing {hdf_file.stem}")
         with open("condtn_psi_data.csv", "a") as csv_fhand:
             writer = csv.writer(csv_fhand)
-            writer.writerows(psi_file_summ(hdf_file))                
+            writer.writerows(psi_file_summ(hdf_file))
+        print(f"done processing {hdf_file.stem}")
     return
     
-
 if __name__ == '__main__':
     cli_parser = argparse.ArgumentParser(description = 'Make conditioning plot')
     cli_parser.add_argument('-f', '--folderpath', type=str, metavar='', required = True, 
