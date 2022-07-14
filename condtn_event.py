@@ -33,8 +33,12 @@ def psi_file_summ(hdf_file):
 
 def save_condition(hdf_path):
     hdf_files = get_filepaths(hdf_path)
+    with open("condtn_psi_data.csv", "w") as csv_fhand:
+        fieldnames = ["Pulse Count", "PSI_amp max (scaled)"]
+        writer = csv.writer(csv_fhand)
+        writer.writerow(fieldnames)
+    
     for hdf_file in hdf_files:
-        print(f"processing {hdf_file.stem}")
         with open("condtn_psi_data.csv", "a") as csv_fhand:
             writer = csv.writer(csv_fhand)
             writer.writerows(psi_file_summ(hdf_file))
