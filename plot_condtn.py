@@ -8,16 +8,14 @@ def csv_unbox(csvname):
     return condtn_mat
 
 def create_condition_plot(xpts, ypts, labels):
-
+    
     fig, ax = plt.subplots()
     plt.title(labels["title"])
-
     ax.plot(xpts, ypts, marker = ",", linewidth = 0,
             color = labels["color"], alpha = labels["alpha"])
-
     ax.set_xlabel(labels["xlabel"])
     ax.set_ylabel(labels["ylabel"])
-    fig.savefig(labels['savename'])
+    fig.savefig(labels["savename"])
 
     return
 
