@@ -5,7 +5,7 @@ import numpy as np
 import csv
 
 def get_filepaths(hdf_path):
-    hdf_file_list = list(hdf_path.glob("EventData*_*.hdf"))
+    hdf_file_list = list(hdf_path.glob("TrendData*.hdf"))
     return hdf_file_list
 
 def psi_file_summ_trend(hdf_file):
@@ -33,12 +33,10 @@ def save_condition(hdf_path):
         print(f"done processing {hdf_file.stem}")
     return
     
-if __name__ == '__main__':
+if __name__ == '__main__':    
     cli_parser = argparse.ArgumentParser(description = 'Make conditioning plot')
     cli_parser.add_argument('-f', '--folderpath', type=str, metavar='', required = True, 
                         help = 'HDF folderpath')
-    args = cli_parser.parse_args()
-    
-    hdf_path = Path(args.folderpath)
-    
+    args = cli_parser.parse_args()    
+    hdf_path = Path(args.folderpath)    
     save_condition(hdf_path)
