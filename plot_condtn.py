@@ -4,7 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 def csv_unbox(csvname):
-    condtn_mat = pd.read_csv(csvname, header=None).to_numpy()
+    condtn_mat = pd.read_csv(csvname, header = None).to_numpy()
     return condtn_mat
 
 def create_condition_plot(xpts, ypts, labels):
@@ -27,7 +27,7 @@ def plot_condtn(csvname):
     "color": "blue",
     "alpha": 0.015,
     "xlabel": "Pulse Count",
-    "ylabel": "Max input power to structure [MW]",
+    "ylabel": "Max input power to structure [W]",
     "savename": "condition1_p.png"
     }
     
