@@ -2,3 +2,4 @@
 ./klyin_calib/
 *.csv
 *.ipynb
+*.jpeg
