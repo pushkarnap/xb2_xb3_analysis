@@ -56,6 +56,17 @@ def all_bds(csvinpath, picklefile, flag, paths):
     bd_df = filter_to_bd(csvinpath, picklefile)
     
     return merge_with_paths(merge_with_flags(bd_df, flag_df), path_df)
+
+def filt_struct_bds(bd_df):
+    
+    #From XBOX3 expert Ben Woolley pg 145
+    mask = (bd_df["BD_PSR_amp"] & bd_df["BD_PERA"] & (~bd_df["BD_PERA"]))
+    struct_bds = bd_df[mask]
+    
+    struct_bds.sort_values("Timestamp", inplace=True)
+    struct_bds.reset_index(drop=True, inplace=True)
+    
+    return struct_bds
     
 if __name__ == "__main__":
     cli_parser = argparse.ArgumentParser(description = 'Filter to breakdowns, by chosen dates')
