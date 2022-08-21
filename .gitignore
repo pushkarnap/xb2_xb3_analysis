@@ -3,3 +3,5 @@
 *.csv
 *.ipynb
 *.jpeg
+./scraped_data/
+./condtn_out/
