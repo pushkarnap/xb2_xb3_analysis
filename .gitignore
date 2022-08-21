@@ -1,9 +1,9 @@
 *.png
-./klyin_calib/
+klyin_calib/
 *.csv
 *.ipynb
 *.jpeg
-./scraped_data/
-./condtn_out/
-./old_condtn_data/
-./time_profiling/
+scraped_data/
+condtn_out/
+old_condtn_data/
+time_profiling/
