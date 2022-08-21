@@ -60,14 +60,28 @@ def all_bds(csvinpath, picklefile, flag, paths):
 def filt_struct_bds(bd_df):
     
     #From XBOX3 expert Ben Woolley pg 145
-    mask = (bd_df["BD_PSR_amp"] & bd_df["BD_PERA"] & (~bd_df["BD_PERA"]))
-    struct_bds = bd_df[mask]
+    struct_bds = bd_df[bd_df["BD_PSR_amp"] & (~bd_df["BD_PERA"]) & bd_df["BD_PKRA"]]
     
-    struct_bds.sort_values("Timestamp", inplace=True)
-    struct_bds.reset_index(drop=True, inplace=True)
+    return struct_bds.sort_values("Timestamp").reset_index(drop=True)
+
+def extract_trend_files(sbd_df):
     
-    return struct_bds
+    filelist = list(pd.unique(sbd_df["FileName"]))
     
+    def create_trend_name(event_file_name):
+    
+        date = event_file_name.split("_")[1]
+        trend_name = f"TrendData_{date}.hdf"
+        
+        return trend_name
+    
+    trend_list = list(map(create_trend_name, filelist))
+    
+    with open("scraped_data/trend_files.pickle", "wb") as fhand:
+        pickle.dump(trend_list, fhand)
+        
+    return
+        
 if __name__ == "__main__":
     cli_parser = argparse.ArgumentParser(description = 'Filter to breakdowns, by chosen dates')
     cli_parser.add_argument('-c', '--csvinpath', type=str, metavar='', required = True, 
