@@ -3,28 +3,36 @@ import argparse
 import h5py
 from pathlib import Path
 import csv
+import numpy as np
 
 def scrape_info_pulse(pulse, hdf_file):
     
     row_to_write = []
-    row_to_write.append(pulse.attrs["Timestamp"])
+    row_to_write.append(pulse.attrs.get("Timestamp", np.nan))
     row_to_write.append(hdf_file.stem)
         
     return row_to_write
 
 def scrape_info_file(hdf_file, csv_name):
     
-    with h5py.File(hdf_file, "r") as hdf_fhand:
+    try:
+        hdf_fhand = h5py.File(hdf_file, "r")
+    except:
+        print(f"Could not find file {hdf_file}")
+        return
+    
+    pulses = hdf_fhand.keys()
+    
+    with open(csv_name, "a") as csv_fhand:
+        writer = csv.writer(csv_fhand)
+        drows = []
+        for pulse in pulses:
+            drow = scrape_info_pulse(hdf_fhand[pulse], hdf_file)
+            drows.append(drow)
+        writer.writerows(drows)
         
-        pulses = hdf_fhand.keys()
-        
-        with open(csv_name, "a") as csv_fhand:
-            writer = csv.writer(csv_fhand)
-            drows = []
-            for pulse in pulses:
-                drow = scrape_info_pulse(hdf_fhand[pulse], hdf_file)
-                drows.append(drow)
-            writer.writerows(drows)
+    hdf_fhand.close()
+    return
 
 def do_csv_write(hdf_path, csv_name):
     

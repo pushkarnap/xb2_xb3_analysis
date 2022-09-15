@@ -37,7 +37,7 @@ def get_sign_change(samples, scaled_wf, pow_max_ninety):
     post_icept_sple = samples[np.r_[[False], sign_change]]
     return (pre_icept_sple, post_icept_sple)
     
-def psi_file_summ(hdf_file):
+def psi_file_summ(hdf_file, powerchannel):
     
     drows = []
     
@@ -46,16 +46,20 @@ def psi_file_summ(hdf_file):
     #write to csv
     #close csv
     #repeat for next pulse and next file...
-    
-    with h5py.File(hdf_file, "r") as hdf_fhand:
-        pulses = list(hdf_fhand.keys())
-        for pulse in pulses:
-            
-            log = hdf_fhand[pulse].attrs["Log Type"]
-            pc = hdf_fhand[pulse].attrs["Pulse Count"]
-            wf = hdf_fhand[pulse]["PSI_amp"]
-            tstamp = hdf_fhand[pulse].attrs["Timestamp"]
-            samples = np.arange(wf.attrs["wf_samples"])
+    try:
+        hdf_fhand = h5py.File(hdf_file, "r")
+    except:
+        print(f"Could not open file {hdf_file}")
+        return []
+    pulses = list(hdf_fhand.keys())
+    for pulse in pulses:
+        log = hdf_fhand[pulse].attrs.get("Log Type", np.nan)
+        pc = hdf_fhand[pulse].attrs.get("Pulse Count", np.nan)
+        wf = hdf_fhand[pulse][powerchannel]
+        tstamp = hdf_fhand[pulse].attrs.get("Timestamp", np.nan)
+        samples = wf.attrs.get("wf_samples", 0)
+        if samples and (samples == wf.shape[0]):
+            samples_arr = np.arange(samples)
             inc = wf.attrs["wf_increment"]
             
             scaled_wf = scale_pow(wf)
@@ -67,7 +71,7 @@ def psi_file_summ(hdf_file):
             #get sample numbers straddling both intercepts.
             #s1 pre intercept sample numbers 
             #s2 post intercept sample numbers
-            s1, s2 = get_sign_change(samples, scaled_wf, pow_max_ninety)
+            s1, s2 = get_sign_change(samples_arr, scaled_wf, pow_max_ninety)
             
             t1 = s1*inc
             
@@ -86,19 +90,28 @@ def psi_file_summ(hdf_file):
             
             drow = [tstamp, pc, log, pow_max, pw]
             drows.append(drow)
+        else:
+            print(pulse)
+            print("problem")
+            drow = [tstamp, pc, log, np.nan, np.nan]
+            drows.append(drow)
+    hdf_fhand.close()
     return drows
 
-def save_condition(hdf_path, csv_name):
+def save_condition(hdf_path, csv_name, powerchannel):
     hdf_files = get_filepaths(hdf_path)
     with open(csv_name, "w") as csv_fhand:
-        fieldnames = ["Timestamp", "Pulse Count", "Log Type", "PSI_amp max (scaled)", "PSI pulse width (90pc)"]
+        fieldnames = ["Timestamp", "Pulse Count", "Log Type", 
+                      f"{powerchannel} max (scaled)", 
+                      f"{powerchannel} pulse width (90pc)"]
         writer = csv.writer(csv_fhand)
         writer.writerow(fieldnames)
     
     for hdf_file in hdf_files:
+        print(f"processing {hdf_file.stem}")
         with open(csv_name, "a") as csv_fhand:
             writer = csv.writer(csv_fhand)
-            writer.writerows(psi_file_summ(hdf_file))
+            writer.writerows(psi_file_summ(hdf_file, powerchannel))
         print(f"done processing {hdf_file.stem}")
     return
     
@@ -108,11 +121,13 @@ if __name__ == '__main__':
                         help = 'HDF folderpath')
     cli_parser.add_argument('-c', '--csv_name', type=str, metavar='', required = True, 
                         help = 'Name of csv outfile')
+    cli_parser.add_argument('-p', '--powerchannel', type=str, metavar='', required = True, 
+                            help = 'Name of power channel considered')
     args = cli_parser.parse_args()
     
     hdf_path = Path(args.folderpath)
     
     start = time.time()
-    save_condition(hdf_path, args.csv_name)
+    save_condition(hdf_path, args.csv_name, args.powerchannel)
     took = time.time() - start
     print(took)

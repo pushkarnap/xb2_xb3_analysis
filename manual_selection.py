@@ -8,13 +8,15 @@ POWER_THRESH = 650000 #Watts
 def clean_tstamps(df):
     
     df["Timestamp"] = df["Timestamp"].astype("string").str.split("'").str[1]
-    df["Timestamp"] = pd.to_datetime(df["Timestamp"], format = "%Y-%m-%dT%H:%M:%S.%fZ")
+    df["Timestamp"] = pd.to_datetime(df["Timestamp"], 
+                                     format = "%Y-%m-%dT%H:%M:%S.%fZ", 
+                                     utc=True)
     
     return df
 
-def apply_pthresh(df):
+def apply_pthresh(df, pchannel):
     
-    mask = df["PSI_amp max (scaled)"] > POWER_THRESH
+    mask = df[pchannel] > POWER_THRESH
     df_pfilt = df[mask]
     
     return df_pfilt
@@ -22,7 +24,7 @@ def apply_pthresh(df):
 def plot_condtn(df, start, finish, savename):
     
     df.set_index("Timestamp", inplace=True)
-    sample = df_pfilt.sort_values("Timestamp")[start:end]
+    sample = df.sort_values("Timestamp")[start:end]
     
     fig, ax1 = plt.subplots()
     fig.autofmt_xdate()

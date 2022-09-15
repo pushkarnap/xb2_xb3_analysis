@@ -15,17 +15,25 @@ def scrape_info_pulse(pulse, feature_list):
 
 def scrape_info_file(hdf_file, csv_name, feature_list):
     
-    with h5py.File(hdf_file, "r") as hdf_fhand:
-        
-        pulses = hdf_fhand.keys()
-        
-        with open(csv_name, "a") as csv_fhand:
-            writer = csv.writer(csv_fhand)
-            drows = []
-            for pulse in pulses:
-                drow = scrape_info_pulse(hdf_fhand[pulse], feature_list)
-                drows.append(drow)
-            writer.writerows(drows)
+    try:
+        hdf_fhand = h5py.File(hdf_file, "r")
+    except:
+        print(f"Could not open file {hdf_file}")
+        return
+    
+    pulses = hdf_fhand.keys()
+    
+    with open(csv_name, "a") as csv_fhand:
+        writer = csv.writer(csv_fhand)
+        drows = []
+        for pulse in pulses:
+            drow = scrape_info_pulse(hdf_fhand[pulse], feature_list)
+            drows.append(drow)
+        writer.writerows(drows)
+    
+    hdf_fhand.close()
+    
+    return
 
 def do_csv_write(hdf_path, csv_name, feature_list):
     
