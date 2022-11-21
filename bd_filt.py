@@ -6,8 +6,8 @@ from manual_selection import clean_tstamps, apply_pthresh, POWER_THRESH
 from dateutil.relativedelta import relativedelta
 import pickle
 
-QSTART = 20
-QEND = 5
+QSTART = 10
+QEND = 10
 BD_LOG = 2 #'2' for XBOX3, '3' for XBOX2
 
 def filter_by_date(df, segments):
@@ -98,16 +98,16 @@ def create_trend_name(event_file_name):
     return trend_name
     
 def construct_trend_queries(structbd_df):
-    qtrend_df = structbd_df.loc[:, ["Timestamp", "FileName"]]
-    qtrend_df.rename(columns = {"Timestamp": "TimestampBD", 
-                                "FileName": "FileNameEvent"}, inplace=True)
+    qtrend_df = structbd_df.loc[:, ["Timestamp"]]
+    qtrend_df.rename(columns = {"Timestamp": "TimestampBD"}, inplace=True)
+                                #"FileName": "FileNameEvent"}, inplace=True)
     
     qtrend_df["StartTrendQ"] = qtrend_df["TimestampBD"]\
         .apply(lambda x: x - relativedelta(seconds = QSTART))
     qtrend_df["EndTrendQ"] = qtrend_df["TimestampBD"]\
         .apply(lambda x: x + relativedelta(seconds = QEND))
-    qtrend_df["FileNameTrend"] = qtrend_df["FileNameEvent"]\
-        .apply(create_trend_name)
+    #qtrend_df["FileNameTrend"] = qtrend_df["FileNameEvent"]\
+        #.apply(create_trend_name)
     
     return qtrend_df
 

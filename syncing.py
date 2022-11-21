@@ -60,12 +60,14 @@ def synchronise(query_df, feature_df, tq_outfile):
 
 def run_trend_query(csvinpath, csvoutpath, trendpath, isxb2):
     
+    print("reading trend data")
     if isxb2:
         feature_df = pd.read_csv(trendpath, parse_dates=["Timestamp"])
         feature_df.rename(columns = {"Timestamp": "TimestampDT"}, inplace=True)
     else:
         feature_df = lv_to_dt(pd.read_csv(trendpath))
-    query_df = pd.read_csv(csvinpath, index_col=0, 
+    print("done loading trend data")
+    query_df = pd.read_csv(csvinpath,
                    parse_dates=["TimestampBD", "StartTrendQ", "EndTrendQ"])
     synchronise(query_df, feature_df, csvoutpath)
     

@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 
-STD_SAMPLE = 25
+STD_SAMPLE = 20
 
 def joiner(tstamps, pressure):
     
@@ -73,24 +73,41 @@ def nan_finder(p_df_csv, channel):
     p_df["TimestampRel"] = (p_df["TimestampDT"] - p_df["TimestampBD"]).to_numpy().astype("int64")/1e9
     groupedonbd = p_df.groupby("TimestampBD")
     
-    def det_nan_loc_wrap(df):
-        
-        def det_nan_loc(df, channel):
-            press = np.array(df[channel])
-            times = np.array(df["TimestampRel"])
-            wherenan = np.isnan(press)
-            nan_times = times[wherenan]
-            min_nan = np.amin(nan_times)
-            if min_nan > 0:
-                return min_nan 
-            else:
-                return np.amax(nan_times)
-        
-        return det_nan_loc(df, channel)
+    def det_nan_loc(df, channel):
+        press = np.array(df[channel])
+        times = np.array(df["TimestampRel"])
+        wherenan = np.isnan(press)
+        nan_times = times[wherenan]
+        return nan_times
     
-    nan_reltime = groupedonbd.apply(det_nan_loc_wrap)
+    nan_arrays = []
+    for key, group in groupedonbd:
+        nan_arrays.append(det_nan_loc(group, channel))
+        
+    return np.hstack(nan_arrays)
     
-    return nan_reltime
+    #def det_nan_loc_wrap(df):
+        
+        #def det_nan_loc(df, channel):
+            #press = np.array(df[channel])
+            #times = np.array(df["TimestampRel"])
+            #wherenan = np.isnan(press)
+            #nan_times = times[wherenan]
+            #return nan_times
+            ##min_nan = np.amin(nan_times)
+            ##if min_nan > 0:
+                ##return min_nan 
+            ##else:
+                ##return np.amax(nan_times)
+        
+        #return det_nan_loc(df, channel)
+    
+    #nan_reltime = groupedonbd.apply(det_nan_loc_wrap)
+    #for group in groupedonbd:
+        #print(group.loc[channel])
+        #print(det_nan_loc(group, channel))
+    
+    #return nan_reltime
 
 
 
