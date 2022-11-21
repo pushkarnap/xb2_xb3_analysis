@@ -10,3 +10,4 @@ time_profiling/
 superseded_notebooks/
 thesis_plots/
 parquets/
+*.txt
