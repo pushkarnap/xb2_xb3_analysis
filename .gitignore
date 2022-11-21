@@ -10,4 +10,4 @@ time_profiling/
 superseded_notebooks/
 thesis_plots/
 parquets/
-*.txt
+git_token_*.txt
